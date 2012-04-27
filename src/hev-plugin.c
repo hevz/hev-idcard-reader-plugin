@@ -754,10 +754,23 @@ static void g_dbus_proxy_reader_get_status_handler(GObject *source_object,
 	if(retval)
 	{
 		GVariant *status = NULL;
+		gboolean s = FALSE;
 
+		s = priv->reader_status;
 		status = g_variant_get_child_value(retval, 0);
 		priv->reader_status = g_variant_get_boolean(status);
 		g_variant_unref(retval);
+		/* Notify */
+		if(priv->reader_status_notify_handler && (priv->reader_status!=s))
+		{
+			NPVariant val = { 0 }, rval = { 0 };
+
+			BOOLEAN_TO_NPVARIANT(priv->reader_status, val);
+			NPN_InvokeDefault(instance, priv->reader_status_notify_handler,
+						&val, 1, &rval);
+			NPN_ReleaseVariantValue(&val);
+			NPN_ReleaseVariantValue(&rval);
+		}
 	}
 }
 
@@ -775,10 +788,23 @@ static void g_dbus_proxy_reader_get_card_status_handler(GObject *source_object,
 	if(retval)
 	{
 		GVariant *status = NULL;
+		gboolean s = FALSE;
 
+		s = priv->card_status;
 		status = g_variant_get_child_value(retval, 0);
 		priv->card_status = g_variant_get_boolean(status);
 		g_variant_unref(retval);
+		/* Notify */
+		if(priv->card_status_notify_handler && (priv->card_status!=s))
+		{
+			NPVariant val = { 0 }, rval = { 0 };
+
+			BOOLEAN_TO_NPVARIANT(priv->card_status, val);
+			NPN_InvokeDefault(instance, priv->card_status_notify_handler,
+						&val, 1, &rval);
+			NPN_ReleaseVariantValue(&val);
+			NPN_ReleaseVariantValue(&rval);
+		}
 	}
 }
 
