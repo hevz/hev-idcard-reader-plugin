@@ -949,7 +949,7 @@ static void hev_plugin_remove_reader(NPP instance, const gchar *object_path)
 			{
 				/* Reader status */
 				priv->reader_status = FALSE;
-				if(priv->reader_status && priv->reader_status_notify_handler)
+				if(priv->reader_status_notify_handler)
 				{
 					NPVariant val = { 0 }, rval = { 0 };
 
@@ -961,7 +961,7 @@ static void hev_plugin_remove_reader(NPP instance, const gchar *object_path)
 				}
 				/* Card status */
 				priv->card_status = FALSE;
-				if(priv->card_status && priv->card_status_notify_handler)
+				if(priv->card_status_notify_handler)
 				{
 					NPVariant val = { 0 }, rval = { 0 };
 
