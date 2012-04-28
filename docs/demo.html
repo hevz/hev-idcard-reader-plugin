@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ID Card Reader Demo</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</head>
+	<body>
+		<embed id="id-card-reader" type="application/x-hevidcardreader"
+			width="0" height="0" debug="true" />
+		<center><h1 id="reader-status"></h1></center>
+		<center><h2 id="card-status"></h2></center>
+		<center><h2 id="card-info-status"></h2></center>
+		<center>
+			<table id="card-info" border="1">
+			</table>
+		</center>
+		<script type="text/javascript">
+			var reader = document.getElementById("id-card-reader");
+			var reader_status = null;
+			var card_status = null;
+			var card_info = null;
+			var count = 0;
+
+			function init_status()
+			{
+				reader_status = reader.GetReaderStatus();
+				update_reader_status(reader_status);
+				card_status = reader.GetCardStatus();
+				update_card_status(card_status);
+			}
+
+			function update_reader_status(s)
+			{
+				var obj = document.getElementById("reader-status");
+
+				if(s)
+				  obj.innerHTML = "Reader OK!";
+				else
+				{
+					obj.innerHTML = "Reader ER!";
+					document.getElementById("card-status").innerHTML = "";
+					document.getElementById("card-info-status").innerHTML = "";
+					document.getElementById("card-info").innerHTML = "";
+				}
+			}
+
+			function update_card_status(s)
+			{
+				var obj = document.getElementById("card-status");
+
+				if(s)
+				  obj.innerHTML = "Reading ..."
+				else
+				  obj.innerHTML = "";
+			}
+
+			function reader_status_changed_handler(s)
+			{
+				if(s != reader_status)
+				{
+					reader_status = s;
+					update_reader_status(s);
+				}
+			}
+
+			function card_status_changed_handler(s)
+			{
+				if(s != card_status)
+				{
+					card_status = s;
+					update_card_status(s);
+				}
+			}
+
+			function card_info_changed_handler()
+			{
+				var obj_cis = document.getElementById("card-info-status");
+				var obj = document.getElementById("card-info");
+
+				obj_cis.innerHTML = "Card info ready! read count: " + ++count;
+
+				obj.innerHTML = "";
+				obj.innerHTML += "<tr><td>Name: </td><td>" + reader.GetCardInfo("name") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Sex: </td><td>" + reader.GetCardInfo("sex") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Nation: </td><td>" + reader.GetCardInfo("nation") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Birthday: </td><td>" + reader.GetCardInfo("birthday") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Address: </td><td>" + reader.GetCardInfo("address") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Serial Number: </td><td>" + reader.GetCardInfo("serial-number") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Grant Dept: </td><td>" + reader.GetCardInfo("grant-dept") + "</td></tr>";
+				obj.innerHTML += "<tr><td>Begin Date: </td><td>" + reader.GetCardInfo("begin-date") + "</td></tr>";
+				obj.innerHTML += "<tr><td>End Date: </td><td>" + reader.GetCardInfo("end-date") + "</td></tr>";
+			}
+
+			/* Set notify handler */
+			reader.SetReaderStatusNotifyHandler(reader_status_changed_handler);
+			reader.SetCardStatusNotifyHandler(card_status_changed_handler);
+			reader.SetCardInfoNotifyHandler(card_info_changed_handler);
+
+			/* Get status */
+			setTimeout(init_status, 500);
+		</script>
+	</body>
+</html>
+
